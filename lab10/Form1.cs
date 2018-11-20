@@ -23,7 +23,7 @@ namespace lab10
             InitializeComponent();
             volumeBar1.Value = 10;
             Play.Enabled = false;
-
+            button4.Enabled = false;
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -50,7 +50,7 @@ namespace lab10
                 //     "   " + PlayList[listBox1.SelectedIndex].Duration;
 
             }
-
+            button4.Enabled = true;
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -85,11 +85,14 @@ namespace lab10
         {
             trackBar1.Maximum = Convert.ToInt32(wmp.currentMedia.duration);
             trackBar1.Value = Convert.ToInt32(wmp.controls.currentPosition);
-            int dur =  Convert.ToInt32(wmp.currentMedia.duration);
-            int durMin = dur / 60;
-            int durSek = dur % 60;
-
-            PlayList[listBox1.SelectedIndex].Duration = durMin.ToString() + "," + durSek.ToString() + " Мин.";
+            if (PlayList[listBox1.SelectedIndex].Way == wmp.URL)
+            {
+                int dur = Convert.ToInt32(wmp.currentMedia.duration);
+                int durMin = dur / 60;
+                int durSek = dur % 60;
+                PlayList[listBox1.SelectedIndex].Duration = durMin.ToString() + "," + durSek.ToString() + " Мин.";
+            }
+            
 
             listBox1.Items[listBox1.SelectedIndex] = PlayList[listBox1.SelectedIndex].Name +
                  "  |  " + PlayList[listBox1.SelectedIndex].Duration;
@@ -106,8 +109,11 @@ namespace lab10
             if ((openFileDialog1.ShowDialog() == DialogResult.OK))
             {
                 listBox1.Items.Add(Path.GetFileName(openFileDialog1.FileName));
-                PlayList.Add(new Track() { Way = openFileDialog1.FileName ,
-                                           Name = Path.GetFileName(openFileDialog1.FileName)});
+                PlayList.Add(new Track()
+                {
+                    Way = openFileDialog1.FileName,
+                    Name = Path.GetFileName(openFileDialog1.FileName)
+                });
 
             }
         }
@@ -129,13 +135,60 @@ namespace lab10
 
         private void button4_Click(object sender, EventArgs e)
         {
-            //if (listBox1.Items.IsReadOnly)
+            string fileName = "TrackList.txt";
+            FileStream aFile = new FileStream(fileName, FileMode.Truncate);
+            StreamWriter sw = new StreamWriter(aFile);
+            aFile.Seek(0, SeekOrigin.End);
+            foreach (Track a in PlayList)
             {
-                if ((openFileDialog1.ShowDialog() == DialogResult.OK))
-                {
+                sw.Write(a.Name + "   ");
+                sw.Write(a.Way + "   ");
+                sw.Write(a.Duration);
+                sw.WriteLine();
 
-                }
             }
+            
+            sw.Close();
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            string fileName = "TrackList.txt";
+            FileStream aFile = new FileStream(fileName, FileMode.Open);
+            StreamReader sr = new StreamReader(aFile);
+            
+            while (!sr.EndOfStream)
+            {
+                
+                string str;
+                int i = 0;
+
+                //str = sr.ReadLine();
+                //PlayList[i].Name = str;
+
+
+                //str = sr.ReadLine();
+                //PlayList[i].Way = str;
+
+
+                //str = sr.ReadLine();
+                //PlayList[i].Duration = str;
+
+                str = sr.ReadLine();
+                string[] arguments = str.Split(new[] { "   " }, StringSplitOptions.RemoveEmptyEntries);
+
+                //var res = new { surname = arguments[0], name = arguments[1], thirdname = arguments[2] };
+                //Console.WriteLine(res.surname + " " + res.name + " " + res.thirdname);
+                if(arguments[2].Length == 0)
+                    PlayList.Add(new Track() { Name = arguments[0], Way = arguments[1] });
+                PlayList.Add(new Track() {Name = arguments[0], Way = arguments[1],Duration = arguments[2] });
+                //PlayList[i].Name = arguments[0];
+                //PlayList[i].Way = arguments[1];
+                //PlayList[i].Duration = arguments[2];
+                //i++;
+                listBox1.Items.Add(arguments[0] + " " + arguments[2]);
+            }
+            sr.Close();
         }
     }
 
