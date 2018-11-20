@@ -141,9 +141,11 @@ namespace lab10
             aFile.Seek(0, SeekOrigin.End);
             foreach (Track a in PlayList)
             {
-                sw.Write(a.Name + "   ");
-                sw.Write(a.Way + "   ");
-                sw.Write(a.Duration);
+                sw.Write(a.Name + "++++");
+                sw.Write(a.Way + "++++");
+                if (a.Duration == null)
+                    sw.Write("  ");
+                else sw.Write(a.Duration);
                 sw.WriteLine();
 
             }
@@ -175,12 +177,11 @@ namespace lab10
                 //PlayList[i].Duration = str;
 
                 str = sr.ReadLine();
-                string[] arguments = str.Split(new[] { "   " }, StringSplitOptions.RemoveEmptyEntries);
+                string[] arguments = str.Split(new[] { "++++" }, StringSplitOptions.RemoveEmptyEntries);
 
                 //var res = new { surname = arguments[0], name = arguments[1], thirdname = arguments[2] };
                 //Console.WriteLine(res.surname + " " + res.name + " " + res.thirdname);
-                if(arguments[2].Length == 0)
-                    PlayList.Add(new Track() { Name = arguments[0], Way = arguments[1] });
+               
                 PlayList.Add(new Track() {Name = arguments[0], Way = arguments[1],Duration = arguments[2] });
                 //PlayList[i].Name = arguments[0];
                 //PlayList[i].Way = arguments[1];
