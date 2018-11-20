@@ -129,9 +129,12 @@ namespace lab10
 
         private void button4_Click(object sender, EventArgs e)
         {
-            if (listBox1.Items.IsReadOnly)
+            //if (listBox1.Items.IsReadOnly)
             {
+                if ((openFileDialog1.ShowDialog() == DialogResult.OK))
+                {
 
+                }
             }
         }
     }
